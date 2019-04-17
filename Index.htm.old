@@ -1,0 +1,440 @@
+<html>
+	<head>
+		<title>SubC Imageing - Remoteing into the network</title>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="./bin/css/index.css">
+		
+		<script>
+			//**Setup Global's
+			/*
+				Common values:
+				> localhost
+			*/
+			var ServerIP_Address = "subc.dyndns.org";
+			var ServerIP_Port = "9090";
+			
+			//**Create connection to class.
+			var connection_WakeUpCls = new WakeUpCls("connection_WakeUpCls");
+			
+			//**Setup name of select element.
+			connection_WakeUpCls.selectObject = "cboAvailableSystems";
+			connection_WakeUpCls.iframeObject = "iframeSubmission";
+			
+			function Startup()
+			{
+				//Populate available system select.
+				BuildListOfSystems();
+			}
+			
+			function BuildListOfSystems()
+			{
+				connection_WakeUpCls.addpc('DESKTOP-Marcus','70-85-C2-23-38-43','192.168.2.76');
+				connection_WakeUpCls.addpc('SUBCDESKTOP-CRAIG','10-C3-7B-96-36-31','192.168.2.89');
+				connection_WakeUpCls.addpc('DESKTOP-TANKRM1','94-DE-80-7E-50-39','192.168.2.182');
+				connection_WakeUpCls.addpc('DESKTOP-STEPHEN','E0-3F-49-A3-4C-23','192.168.2.65');
+				connection_WakeUpCls.addpc('DESKTOP-MARK','78-24-AF-47-28-73','192.168.2.183');
+				connection_WakeUpCls.addpc('Conference Room','1C-1B-0D-FD-70-92','192.168.2.72');
+				connection_WakeUpCls.addpc('DESKTOP-GMT45E0','EC-08-6B-03-EF-C9','');
+				connection_WakeUpCls.addpc('DESKTOP-PLNAETH','4C-ED-FB-42-33-5F','');
+				
+				connection_WakeUpCls.addpc('PC08','94-DE-80-7E-51-56','192.168.2.86');
+				connection_WakeUpCls.addpc('PC10','40-16-7E-E9-10-8E','');
+				connection_WakeUpCls.addpc('PC13','D8-CB-8A-CA-1D-95','192.168.2.85');
+				connection_WakeUpCls.addpc('PC20','02-00-4C-4F-4F-50','192.168.2.97');
+				
+				connection_WakeUpCls.addpc('XRX4F137C','9C-93-4E-4F-13-7C','192.168.2.104');
+				connection_WakeUpCls.addpc('XRXFE54EE','30-52-CB-FE-54-EE','192.168.2.108');
+				connection_WakeUpCls.addpc('DESKTOP-168L33V','78-24-AF-D9-7F-2A','192.168.2.92');
+				
+				connection_WakeUpCls.addpc('UnknownPC01','18-31-BF-D2-BC-EC','');
+				connection_WakeUpCls.addpc('UnknownPC02','00-80-F0-DD-CF-60','');
+				connection_WakeUpCls.addpc('UnknownPC03','00-04-F2-B1-91-13','');
+				connection_WakeUpCls.addpc('UnknownPC04','54-78-1A-12-A9-C4','');
+				connection_WakeUpCls.addpc('UnknownPC05','18-B4-30-CB-FA-22','');
+				connection_WakeUpCls.addpc('UnknownPC07','00-04-F2-AC-39-4D','192.168.2.80');
+				connection_WakeUpCls.addpc('UnknownPC08','C4-64-13-3C-68-CB','192.168.2.81');
+				connection_WakeUpCls.addpc('UnknownPC09','AC-37-43-A5-1A-D3','192.168.2.64');
+				connection_WakeUpCls.addpc('UnknownPC10','BC-16-F5-6D-58-23','192.168.2.98');
+				connection_WakeUpCls.addpc('UnknownPC11','00-40-8C-DE-7B-76','192.168.2.114');
+				connection_WakeUpCls.addpc('UnknownPC12','94-DE-80-7E-51-51','192.168.2.137');
+				connection_WakeUpCls.addpc('UnknownPC13','18-B4-30-1A-A7-CD','192.168.2.161');
+				connection_WakeUpCls.addpc('UnknownPC14','B0-4E-26-5A-A1-0E','192.168.2.252');
+				connection_WakeUpCls.addpc('UnknownPC15','70-4F-57-CA-9A-0A','192.168.2.253');
+				connection_WakeUpCls.addpc('UnknownPC16','00-02-D1-5F-A7-F2','192.168.2.254');
+			}
+			
+			function WakeSystem()
+			{
+				//Debug.. 1=on; 0=off;
+				var debug = 0;
+				
+				//*Build URL and test for errors.
+				var WakeURL = BuildURL(document.getElementById(connection_WakeUpCls.selectObject).value,document.getElementById(connection_WakeUpCls.selectObject).text,debug);
+				
+				if (WakeURL != false) {
+					//**Submit selected MAC address to the php script.
+					document.getElementById(connection_WakeUpCls.iframeObject).src = WakeURL;
+					//window.open(WakeURL);
+				}
+			}
+			
+			function BuildURL(mac,text,debug)
+			{
+				if (connection_WakeUpCls.isNull(mac)) {
+					alert('Failed to wake up system. MAC address missing!');
+					return false;
+				} else {
+					var baseURL = "http://" + ServerIP_Address;
+					var portNum = ":" + ServerIP_Port;
+					var filename = "/wakeme/wakeme.php?";
+					var macInput = "macaddr=" + ValidateMacAddr(mac);
+					//var ownerInput = "owner="+text;
+					var GeneratedURL = baseURL + portNum + filename + macInput;
+					//var GeneratedURL = baseURL + portNum + filename + macInput + ownerInput;
+					
+					if (!connection_WakeUpCls.isNull(debug)) alert(GeneratedURL);
+					return GeneratedURL;
+				}
+			}
+			
+			function ValidateMacAddr(mac) {
+				if (mac.length == 12) {
+					//**Valid input.. no more work to be done.
+				} else {
+					//**Something is wrong! More checking needed.
+					if (mac.length < 12) {
+						//**Not a valid mac address, return value invalid.
+						mac = "invalid";
+					} else if (mac.length > 12) {
+						var new_mac = null;
+						
+						/*
+							Mac address could be including "-"'s or ":"'s.
+							Need to remove them!
+						*/
+						
+						//**Checking if they are "-"'s.
+						var replacement_character = mac.substring(2,3);
+						
+						if (replacement_character == "-") {
+							new_mac = mac.replace(/-/g, "");
+							mac = new_mac;
+						} else if (replacement_character == ":") {
+							new_mac = mac.replace(/:/g, "");
+							mac = new_mac;
+						} else {
+							//**Not a valid mac address, return value invalid.
+							mac = "invalid";
+						}
+						
+						//*Clean-up.
+						replacement_character = null;
+					}
+				}
+				
+				return mac;
+			}
+			
+			//Wake-up Class.
+			function WakeUpCls (name)
+			{
+				//Form elements.
+				this.selectObject = null;
+				this.iframeSubmission = null;
+				
+				//**addpc usage variables.
+				this.selectElement = null;
+				this.selectElement_option = null;
+				
+				//Add pc.
+				this.addpc = function(computername,mac,ip)
+				{
+					//if (this.isNull(mac) || this.isNull(ip)) {
+					if (this.isNull(mac)) {
+						alert('Unable to add entry! Missing IP and/or MAC address');
+						return false;
+					} else {
+						//**Variable Reset
+						this.selectElement = null;
+						this.selectElement_option = null;
+						
+						//**Output to object.
+						this.selectElement = document.getElementById(this.selectObject);
+						this.selectElement_option = document.createElement("option");
+						
+						//**Optional if ip was needed.
+						/*
+						if (this.isNull(ip)) {
+							this.selectElement_option.value = mac + '~na';
+						} else {
+							this.selectElement_option.value = mac + '~' + ip;
+						}
+						*/
+						
+						this.selectElement_option.value = mac;
+						this.selectElement_option.text = computername + ' (' + mac + ')';
+						
+						this.selectElement.add(this.selectElement_option);
+						return true;
+					}
+				}
+				
+				this.isNull = function(value)
+				{
+					if (value == null || value == "")
+					{
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		</script>
+	</head>
+	
+	<body onLoad="Startup()" class="body">
+		<table cellpadding="0" cellspacing="2" border="0" class="tables" width="100%">
+			<tr>
+				<td>
+					<!-- Heading -->
+					<div class="">
+						<table cellpadding="0" cellspacing="0" border="0" class="tables" width="100%">
+							<tr>
+								<td><img src="./bin/images/subc_logo.jpg" alt="SubC Imaging Logo"></td>
+							</tr>
+							<tr class="title common-values">
+								<td>Remoting into the network</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<!-- Setup/Instructions -->
+					<div class="divs rouunded_corners">
+						<table cellpadding="0" cellspacing="0" border="0" class="tables" width="100%">
+							<tr class="headings common-values">
+								<td>Setting it up</td>
+							</tr>
+							<!--
+							<tr class="sub-headings common-values instructions-step">
+								<td>Step 1: Creating a connection to the work network using a VPN</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td><p>Since we are trying to save power and in an effect to do some cost savings you will need to wake up you computer before you can get access to a from or remote location. Therefore, we need to create a tunnel to the office network to be able to wake up the required computer(s).</p></td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>&nbsp;</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td><p><b>*Please note once your computer is awake, you do not need the VPN to use a remote desktop solution but the VPN will offer options of getting direct connection to any network resources you may need from the office remotely.</b></p></td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>&nbsp;</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td><p>Setting up a VPN can be done on several operating systems and devices. On this page we will be covering Microsoft Windows 7 and 10. For information on how to setup on a mac please click <a href="https://support.apple.com/en-ca/guide/mac-help/set-up-a-vpn-connection-on-mac-mchlp2963/10.14/mac/10.14" target="_blank">here</a>. The first step is to know your login information.</p></td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>&nbsp;</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>
+									<table cellpadding="0" cellspacing="0" border="0" class="instructions-table common-values" width="70%" align="center">
+										<tr>
+											<td align="right"><code>Internet address:</code></td>
+											<td><code>subc.dyndns.org</code></td>
+										</tr>
+										<tr>
+											<td align="right"><code>Username:</code></td>
+											<td><code>SubC-(firstname) [example: SubC-Bob]</code></td>
+										</tr>
+										<tr>
+											<td align="right"><code>Password:</code></td>
+											<td><code>(Default is "Rayfin2018)</code></td>
+										</tr>
+										<tr>
+											<td align="right"><code>Domain:</code></td>
+											<td><code>blank</code></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr class="common-values">
+								<td colspan="2"><code>**If you are having login issues, please email me, <a href="mailto:craig.sheppard@subccontrol.com" target="blank">craig.sheppard@subccontrol.com</a>.</code></td>
+							</tr>
+							
+							<tr class="sub-headings common-values">
+								<td>&nbsp;</td>
+							</tr>
+							
+							<tr class="sub-headings common-values instructions-step">
+								<td>Microsoft Windows 7</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>
+									<ol>
+										<li>Goto Start > Control Panel > Network and Internet > Network and Sharing Center</li>
+										<li>Click on "Set up a new connection or network"</li>
+										<li>Choose "Connect to a workplace" and click Next</li>
+										<li>Choose "Use my Internet connection (VPN)</li>
+										<li>Enter the "Internet address" (please refer to the above section for information)</li>
+										<li>Does not matter what "Destination name" is but for example you can call it "SubC Connection"</li>
+										<li>Click "Next"</li>
+										<li>Type your "User name"</li>
+										<li>Type your "Password"</li>
+										<li>Click "Connect"</li>
+									</ol>
+								</td>
+							</tr>
+							<tr class="sub-headings common-values instructions-step">
+								<td>Microsoft Windows 10</td>
+							</tr>
+							
+							<tr class="sub-headings common-values">
+								<td>
+									<ol>
+										<li>Goto Start > Type "Settings" and press enter</li>
+										<li>Click on "Network & Internet"</li>
+										<li>Click on "VPN"</li>
+										<li>Click "Add a VPN Connection" and enter connection details.<br/><img src="./bin/images/win10_VPNCS.jpg" alt="Win10-Add a VPN Connection"></li>
+										<li>Click "Save"</li>
+										<li>After clicking save, click on the new connection you just made. If you followed the example, you will see something like the below.<br/><img src="./bin/images/win10_VPN_ConnShortcut.jpg" alt="Win10-VPN Connect Shortcut"></li>
+										<li>Once the option is clicked you will see the below screen. Click the "Connect" button.<br/><img src="./bin/images/win10_VPN_ConnButton.jpg" alt="Win10-VPN Connect Button."></li>
+										<li>The system will now connect and register you on the network.</li>
+									</ol>
+								</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>
+									<table cellpadding="2" cellspacing="0" border="0" class="tables" width="50%">
+										<tr class="sub-headings common-values">
+											<td><b>Note:</b> If you did not enter the user name or password on creating the VPN connection, windows will prompt you to enter it before completing the connection using a screen like the one below.</td>
+										</tr>
+										<tr>
+											<td><img src="./bin/images/win10_VPN_LoginScreen.jpg" alt="Win10-Login Screen"></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							
+							<tr class="sub-headings common-values">
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							!-->
+							
+							<!--
+							<tr class="sub-headings common-values">
+								<td>
+									<ol>
+										<li>Goto Start > Type "Control Panel" and press enter</li>
+										<li>Click on "Network and Internet" > "Network and Sharing Center"</li>
+										<li>Click on "Set up a new connection or network"</li>
+										<li>Choose "Connect to a workplace" and click Next</li>
+										<li>Choose "Use my Internet connection (VPN)</li>
+										<li>Enter the "Internet address" (please refer to the above section for information)</li>
+										<li>Does not matter what "Destination name" is but for example you can call it "SubC Connection"</li>
+										<li>Click "Create"</li>
+										<li>Your are now back to the "Network and Sharing Center" and need to click on the left side, "Change adapter settings"</li>
+										<li>In here you are looking for your connection you just made. It will be formatted to show name of connection, status and type. The type we are looking for is "WAN Miniport (IKEv2)".</li>
+										<li>Right click on it and goto "Properties"</li>
+										<li>Click on the "Security" tab</li>
+										<li>Change "Data encryption" to "Require encryption (disconnect if server declines)</li>
+										<li>Check the box "Allow these protocols"</li>
+										<li>Ensure boxes "Challenge Handshake Authentication Protocol (CHAP)" and "Microsoft CHAP Version 2 (MS-CHAPv2)" are checked</li>
+										<li>Click "Ok"</li>
+										<li>The system will provide a warning, click OK</li>
+										<li>Close the Network Connecrions window</li>
+										<li>Close the Network and Sharing Center window</li>
+										<li>Goto Start > Type "Settings" and press enter</li>
+										<li>Click on "Network & Internet"</li>
+										<li>Click on "VPN"</li>
+										<li>Click on the VPN connection you made</li>
+										<li>Click "Connect"</li>
+										<li>Now should be prompted for User name and Password</li>
+										<li>Type your "User name"</li>
+										<li>Type your "Password"</li>
+										<li>Click "Ok"</li>
+									</ol>
+								</td>
+							</tr>
+							!-->
+							
+							<tr class="sub-headings common-values instructions-step">
+								<td>Step 1: Waking up your computer</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>In the below section "Waking up you computer", choose the computer matching your name and click "Wake Me"</td>
+							</tr>
+							
+							<tr class="sub-headings common-values">
+								<td>&nbsp;</td>
+							</tr>
+							
+							<tr class="sub-headings common-values instructions-step">
+								<td>Step 2: Remoting into your system</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>You can now use any software you would like, to remote into your computer. Some examples include:</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>
+									<ul>
+										<li><a href="https://www.teamviewer.com/en/download/old-versions.aspx#version8" target="blank">Teamviewer</a> (Teamviewer 8 is preferred)</li>
+										<li><a href="https://chrome.google.com/webstore/detail/chrome-remote-desktop/gbchcmhmhahfdphkhkmpfmihenigjmpp?hl=en" target="blank">Chrome Remote Desktop</a></li>
+										<li>
+											<div class="tooltip">
+												Windows Remote Desktop Connection
+												<!-- <span class="tooltiptext">Remote Desktop does not have any built-in remote wake-up capability.</span> -->
+											</div>
+											(Click <a href="https://support.microsoft.com/en-ca/help/4028379/windows-10-how-to-use-remote-desktop" target="_blank">here</a> to instructions on usage.)
+										</li>
+									</ul>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<!-- Waking up you computer -->
+					<div class="divs rouunded_corners">
+						<table cellpadding="0" cellspacing="0" border="0" class="tables" width="100%">
+							<tr class="headings common-values">
+								<td>Waking up you computer</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>Choose you name from the list to wake up your pc.</td>
+							</tr>
+							<tr class="sub-sections common-values">
+								<td>
+									<select id="cboAvailableSystems" name="cboAvailableSystems" class="selectObjectStyle" size="5"></select>
+								</td>
+							</tr>
+							<tr class="sub-sections common-values">
+								<td>
+									<button id="" name="" type="button" onclick="WakeSystem();" class="buttonOjectStyle">Wake Me</button>
+								</td>
+							</tr>
+							
+							<tr class="sub-sections common-values">
+								<td><iframe id="iframeSubmission" name="iframeSubmission" frameborder="0" src="" scrolling="no" class="iframeObjectStyle sub-headings"></iframe></td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr class="footer common-values">
+				<td>&copy;2018 SubC Imaging<br/>Created by Craig Sheppard</td>
+			</tr>
+		</table>
+	</body>
+</html>

@@ -1,0 +1,179 @@
+<html>
+	<head>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<title>WakeMe Utility - Admin Tool (2018-19)</title>
+		<link rel="stylesheet" href="./bin/css/admin.css">
+		
+		<script>
+			/*
+				Common values:
+				> localhost
+			*/
+			var ServerIP_Address = "subc.dyndns.org";
+			var ServerIP_Port = "9090";
+			
+			//**System startup.
+			function Startup() {
+				
+			}
+			
+			function LoadLogFile() {
+				//Debug.. 1=on; 0=off;
+				var debug = 0;
+				
+				//**Execute cmd.
+				execOption('LoadLogFile',debug,'iframeLogFile');
+			}
+			
+			function Convert() {
+				//Debug.. 1=on; 0=off;
+				var debug = 0;
+				
+				//**Execute cmd.
+				execOption('LoadLogFile',debug,'iframeConvertedValues');
+			}
+			
+			function StartScan() {
+				//Debug.. 1=on; 0=off;
+				var debug = 0;
+				
+				//**Execute cmd.
+				execOption('ScanNetwork',debug);
+			}
+			
+			function ClearCache() {
+				//Debug.. 1=on; 0=off;
+				var debug = 0;
+				
+				//**Execute cmd.
+				execOption('ClearCache',debug);
+			}
+			
+			function execOption(cmd,debug,iframe_name) {
+				//*Build URL and test for errors.
+				var BuildCustomURL = BuildURL(cmd,debug);
+				
+				//**Check iframe and ensure value is set.
+				if (isNull(iframe_name)) { iframe_name = 'iframeStatusLog'; } else { iframeStatusLog = iframe_name; }
+				
+				if (BuildCustomURL != false) {
+					//**Submit to the php script.
+					document.getElementById(iframe_name).src = BuildCustomURL;
+				}
+			}
+			
+			function BuildURL(cmd,debug) {
+				if (isNull(cmd)) {
+					alert('Failed to generate! (' + cmd + ')');
+					return false;
+				} else {
+					var baseURL = "http://" + ServerIP_Address;
+					var portNum = ":" + ServerIP_Port;
+					var filename = "/wakeme/admin.php?";
+					var macInput = "action=" + cmd;
+					var GeneratedURL = baseURL + portNum + filename + macInput;
+					
+					if (debug == 1) alert(GeneratedURL);
+					return GeneratedURL;
+				}
+			}
+			
+			function opentab(tabName) {
+				var i;
+				var x = document.getElementsByClassName("tab");
+				
+				for (i = 0; i < x.length; i++) {
+					x[i].style.display = "none";  
+				}
+				
+				document.getElementById(tabName).style.display = "block";  
+			}
+			
+			function isNull(value) {
+				if (value == null) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		</script>
+	</head>
+	<body onLoad="Startup()">
+		<table cellpadding="0" cellspacing="2" border="0" class="tables" width="100%">
+			<tr>
+				<td>
+					<!-- Heading -->
+					<div class="">
+						<table cellpadding="0" cellspacing="0" border="0" class="tables" width="100%">
+							<tr>
+								<td><img src="./bin/images/subc_logo.jpg" alt="SubC Imaging Logo"></td>
+							</tr>
+							<tr class="title common-values">
+								<td>WakeMe Admin Tool</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<!-- Network Scanning -->
+					<div class="divs rouunded_corners">
+						<table cellpadding="0" cellspacing="0" border="0" class="tables" width="100%">
+							<tr class="headings common-values">
+								<td>Network Scanning</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>
+									<center><button id="" name="" onclick="ClearCache();" class="buttonOjectStyle">Clear Cache</button><button id="" name="" onclick="StartScan()" class="buttonOjectStyle">Scan Network</button></center>
+								</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td><iframe id="iframeStatusLog" name="iframeStatusLog" frameborder="0" src="" scrolling="no" class="small-iframeObjectStyle sub-headings"></iframe></td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<!-- Scan Log / Conversion -->
+					<div class="divs rouunded_corners">
+						<table cellpadding="0" cellspacing="0" border="0" class="tables" width="100%">
+							<tr class="headings common-values">
+								<td>Scan Log / Conversion</td>
+							</tr>
+							<tr class="sub-headings common-values">
+								<td>
+									<center><button id="" name="" onclick="LoadLogFile();" class="buttonOjectStyle">Load Log File and Convert</button></center>
+								</td>
+							</tr>
+							<!--
+							<tr class="sub-headings common-values">
+								<td>
+									<div class="resource-bar resource-black">
+										<button class="resource-bar-item resource-button" onclick="opentab('LogFile')">Log File</button>
+									</div>
+								</td>
+							</tr>
+							-->
+							<tr class="sub-headings common-values" style="background-color: #282828;">
+								<td>
+									<div id="LogFile" class="resource-container tab">
+										<iframe id="iframeLogFile" name="iframeLogFile" frameborder="0" src="" scrolling="yes" class="tall-iframeObjectStyle sub-headings"></iframe>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr class="footer common-values">
+				<td>&copy;2018 SubC Imaging<br/>Created by Craig Sheppard</td>
+			</tr>
+		</table>
+	</body>
+</html>

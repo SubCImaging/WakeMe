@@ -1,12 +1,12 @@
-##SubC WakeMe
+## SubC WakeMe
 
 Programmed by: Craig Sheppard
 @copy2018 Subc Imaging.
 
-##Purpose
+## Purpose
 WakeMe is a platform to that uses the utility WakeMeOnLan.exe to generarte a local copy of machine on the network and allow remote users to wake one or more of those personal computers. You can wake your Microosoft Windows, Mac or any device on the network that allows for the magic packet to be send to it's network card.
 
-##WakeMeOnLan.exe (https://www.nirsoft.net/utils/wake_on_lan.html)
+## WakeMeOnLan.exe (https://www.nirsoft.net/utils/wake_on_lan.html)
 This utility allows you to easily turn on one or more computers remotely by sending Wake-on-LAN (WOL) packet to the remote computers. 
 When your computers are turned on, WakeMeOnLan allows you to scan your network, and collect the MAC addresses of all your computers, and save the computers list into a file. Later, when your computers are turned off or in standby mode, you can use the stored computers list to easily choose the computer you want to turn on, and then turn on all these computers with a single click. 
 WakeMeOnLan also allows you to turn on a computer from command-line, by specifying the computer name, IP address, or the MAC address of the remote network card.

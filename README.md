@@ -16,6 +16,6 @@ Once you know the target pc is ready, you can choose the pc from the list and cl
 
 Please visit subc.dyndns.org:9090/wakeme for more instructions.
 
-## --
+##
 Programmed by: Craig Sheppard
-@copy;2018 Subc Imaging.
+2018 Subc Imaging

@@ -14,8 +14,9 @@ With Wake-On-LAN (or WoL or WoWLAN for Wake-On-Wireless LAN), you can turn on yo
 
 Once you know the target pc is ready, you can choose the pc from the list and click the "Wake Me" button. The system will send the command and display a message weather the command could be completed. Please note if you run this from within the same network using the website it will only work if you are able to get reverse loopback working. It needs in the configuration of the Javascript a source ip and port number to use when it builds the url to execute the command.
 
-Please visit subc.dyndns.org:9090/wakeme for more instructions.
+
 
 ##
-Programmed by: Craig Sheppard
-2018 Subc Imaging
+Please visit http://subc.dyndns.org:9090/wakeme/ for more instructions.
+
+Programmed by: Craig Sheppard (2018 Subc Imaging)
